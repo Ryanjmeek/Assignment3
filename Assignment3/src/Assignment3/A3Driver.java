@@ -180,5 +180,177 @@ public class A3Driver
 		  
 	  }
 	  
-
+	  private static String[] mySplit(String oldString){
+			int count = 0;
+			String[] newString = oldString.split(" ");
+			for (int i = 0; i < newString.length; i ++)
+			{
+				if (newString[i].length() > 0)
+				{
+					count ++;
+				}
+			}
+			String[] correctString = new String[count];
+			int k = 0;
+			for (int j = 0; j < newString.length; j ++)
+			{	
+				if (newString[j].length() > 0)
+				{
+					correctString[k] = newString[j];
+					k ++;
+				}
+			}
+			return correctString;
+	  }
+	  
+	  public void insert(ArrayList<Item> shoppingCart, String[] input) 
+	  {
+		  	Item myItem;
+		  	if(input[1] == "clothing")
+		  	{
+		  		myItem = new Clothing();
+		  		myItem.name = input[2];
+		  		myItem.price = Double.valueOf(input[3]);
+		  		myItem.quantity = Integer.valueOf(input[4]);
+		  		myItem.weight = Double.valueOf(input[5]);
+		  	}
+		  	else if(input[1] == "electronics")
+		  	{
+		  		myItem = new Electronics();
+		  		myItem.name = input[2];
+		  		myItem.price = Double.valueOf(input[3]);
+		  		myItem.quantity = Integer.valueOf(input[4]);
+		  		myItem.weight = Double.valueOf(input[5]);
+		  		if (input[6] == "f")
+		  		{
+		  			myItem.fragile = true;
+		  		}
+		  		else
+		  		{
+		  			myItem.fragile = false;
+		  		}
+		  		myItem.state = input[7];	//TX, NM, VA, AZ, AK tax exempt
+		  		if (myItem.state == "tx" || myItem.state == "nm" || myItem.state == "va"
+		  				|| myItem.state == "az" || myItem.state == "ak")
+		  		{
+		  			myItem.tax = false;
+		  		}
+		  		else
+		  		{
+		  			myItem.tax = true;
+		  		}
+		  	}
+		  	else
+		  	{
+		  		myItem = new Grocery();
+		  		myItem = new Electronics();
+		  		myItem.name = input[2];
+		  		myItem.price = Double.valueOf(input[3]);
+		  		myItem.quantity = Integer.valueOf(input[4]);
+		  		myItem.weight = Double.valueOf(input[5]);
+		  		if (input[6] == "p")
+		  		{
+		  			myItem.perishable = true;
+		  		}
+		  		else
+		  		{
+		  			myItem.perishable = false;
+		  		}
+		  	}
+		  	
+		  	Iterator<Item> cart = shoppingCart.iterator();
+		  	int index = 0;
+		  	if (shoppingCart.isEmpty())
+		  	{
+		  		shoppingCart.add(myItem);
+		  	}
+		  	else {
+			  	while (cart.hasNext())
+			  	{
+			  		Item temp = cart.next();
+			  		String name = temp.name;
+			  		if (myItem.name.compareTo(name) >= 0)
+			  		{
+			  			index ++;
+			  		}
+			  		else
+			  		{
+			  			shoppingCart.add(index, myItem);	//this might not work if myItem.name is greater than the last item.name
+			  			break;
+			  		}
+			  	}
+		  	}
+		  	
+	  }
+	  
+	  public void delete(ArrayList<Item> shoppingCart, String[] input)
+	  {
+		  	Iterator<Item> cart = shoppingCart.iterator();
+		  	int index = 0;
+		  	int numRemoved = 0;
+		  	String inputName = input[1];
+		  	while (cart.hasNext())
+		  	{
+		  		Item temp = cart.next();
+		  		String cartName = temp.name;
+		  		if (inputName.compareTo(cartName) == 0)
+		  		{
+		  			shoppingCart.remove(index);
+		  			numRemoved ++;
+		  		}
+		  		else
+		  		{
+		  			index ++;
+		  		}
+		  	}
+		  	System.out.println("Number of " + inputName + "s removed: " + numRemoved);
+	  }
+	  
+	  public void search(ArrayList<Item> shoppingCart, String[] input)
+	  {
+		  	Iterator<Item> cart = shoppingCart.iterator();
+		  	int numFound = 0;
+		  	String inputName = input[1];
+		  	while (cart.hasNext())
+		  	{
+		  		Item temp = cart.next();
+		  		String cartName = temp.name;
+		  		if (inputName.compareTo(cartName) == 0)
+		  		{
+		  			numFound ++;
+		  		}
+		  	}
+		  	System.out.println("Number of " + inputName + "s found: " + numFound);
+	  }
+	  
+	  public void update(ArrayList<Item> shoppingCart, String[] input)
+	  {
+		  	Iterator<Item> cart = shoppingCart.iterator();
+		  	String inputName = input[1];
+		  	int newQuantity = Integer.valueOf(input[2]);
+		  	while (cart.hasNext())
+		  	{
+		  		Item temp = cart.next();
+		  		String cartName = temp.name;
+		  		if (inputName.compareTo(cartName) == 0)
+		  		{
+		  			temp.quantity = newQuantity;
+		  			System.out.println("Number of " + inputName + "s: " + newQuantity);
+		  			break;
+		  		}
+		  	}
+	  }
+	  
+	  public void print(ArrayList<Item> shoppingCart, String[] input) 
+	  {
+		  	double totalPrice = 0.0;
+		  	Iterator<Item> cart = shoppingCart.iterator();
+		  	while (cart.hasNext())
+		  	{
+		  		Item temp = cart.next();
+		  		temp.printItemAttributes();
+		  		totalPrice += temp.calculatePrice();
+		  		System.out.println("The total charges for the entire cart: $" + totalPrice);
+		  	}
+	  }	  
 }
